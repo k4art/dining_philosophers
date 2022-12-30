@@ -9,10 +9,6 @@
 #include "dining_table.h"
 #include "philosopher.h"
 
-#ifndef PHILOSOPHER_DINNER_TIME_SEC
-#error PHILOSOPHER_DINNER_TIME_SEC is not set
-#endif
-
 static void philosopher_dine(philosopher_t * philosopher)
 {
   sleep(PHILOSOPHER_DINNER_TIME_SEC);
