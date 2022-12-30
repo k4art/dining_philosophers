@@ -1,0 +1,7 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define PHILOSOPHER_DINNER_TIME_SEC      1
+#define DINING_TABLE_PHILOSOPHERS_NUMBER 5
+
+#endif
