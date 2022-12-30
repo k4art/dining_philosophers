@@ -16,7 +16,7 @@ static void philosopher_dine(philosopher_t * philosopher)
 
 static void philosopher_think(philosopher_t * philosopher)
 {
-  printf("%u thinking...\n", philosopher->id);
+  printf("%zu thinking...\n", philosopher->id);
 }
 
 static bool philosopher_try_dine(philosopher_t * philosopher, fork_t ** p_busy_fork)
@@ -44,7 +44,7 @@ static bool philosopher_try_dine(philosopher_t * philosopher, fork_t ** p_busy_f
     busy_fork = right_fork;
     if (fork_try_take(right_fork))
     {
-      printf("%u DINNER TIME!\n", philosopher->id);
+      printf("%zu DINNER TIME!\n", philosopher->id);
       philosopher_dine(philosopher);
 
       busy_fork = NULL;
@@ -64,14 +64,14 @@ static void philosopher_dining_behavior_start(philosopher_t * philosopher)
 {
   fork_t * busy_fork = NULL;
 
-  printf("%u STARTED\n", philosopher->id);
+  printf("%zu STARTED\n", philosopher->id);
 
   while (!philosopher_try_dine(philosopher, &busy_fork))
   {
     philosopher_think(philosopher);
   }
 
-  printf("%u DONE\n", philosopher->id);
+  printf("%zu DONE\n", philosopher->id);
 }
 
 static void * philosopher_thread_routine(void * context)
