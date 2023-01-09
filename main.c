@@ -4,13 +4,20 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include "random.h"
 #include "dining_table.h"
+
+static dining_table_t table;
+
+static void initialize(void)
+{
+  random_init();
+  dining_table_init(&table);
+}
 
 int main(void)
 {
-  dining_table_t table;
-
-  dining_table_init(&table);
+  initialize();
 
   dining_table_dinner_begin(&table);
   dining_table_dinner_wait_end(&table);
