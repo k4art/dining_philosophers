@@ -7,7 +7,7 @@ CFLAGS = -Werror
 
 LOG_ONLY_DINING ?= 0
 
-ifneq (LOG_ONLY_DINING, 0)
+ifneq ($(LOG_ONLY_DINING), 0)
 	CFLAGS += -DLOG_ONLY_DINING
 endif
 
