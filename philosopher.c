@@ -48,10 +48,10 @@ static void determine_forks_order(fork_t * last_busy_fork,
                                   fork_t ** p_first_fork,
                                   fork_t ** p_second_fork)
 {
-  if (last_busy_fork == *p_first_fork)
+  if (last_busy_fork == *p_second_fork)
   {
-    *p_first_fork  = *p_second_fork;
-    *p_second_fork = last_busy_fork;
+    *p_second_fork = *p_first_fork;
+    *p_first_fork  = last_busy_fork;
   }
 }
 
