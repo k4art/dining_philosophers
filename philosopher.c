@@ -28,57 +28,55 @@ static bool philosopher_try_dine(philosopher_t * philosopher, fork_t ** p_busy_f
   fork_t * left_fork  = dining_table_left_fork_get(table, philosopher);
   fork_t * right_fork = dining_table_right_fork_get(table, philosopher);
 
+  fork_t * first_fork  = left_fork;
+  fork_t * second_fork = right_fork;
+
   if (*p_busy_fork == right_fork)
   {
-    fork_t * temp = left_fork;
-    left_fork = right_fork;
-    right_fork = temp;
+    first_fork = right_fork;
+    second_fork = left_fork;
   }
 
-  fork_t * busy_fork;
+  fork_t * busy_fork = second_fork; /* Only second_fork can be returned as busy */
 
-  busy_fork = left_fork;
+  fork_wait_take(first_fork);
 
-  fork_wait_take(left_fork);
+  if (fork_try_take(second_fork))
   {
-    busy_fork = right_fork;
-    if (fork_try_take(right_fork))
-    {
-      printf("%zu DINNER TIME!\n", philosopher->id);
-      philosopher_dine(philosopher);
+    philosopher_dine(philosopher);
 
-      busy_fork = NULL;
+    busy_fork = NULL;
 
-      fork_release(right_fork);
-    }
-
-    fork_release(left_fork);
+    fork_release(second_fork);
   }
+
+  fork_release(first_fork);
 
   *p_busy_fork = busy_fork;
 
   return busy_fork == NULL;
 }
 
-static void philosopher_dining_behavior_start(philosopher_t * philosopher)
+static void philosopher_dining_behavior_loop(philosopher_t * philosopher)
 {
   fork_t * busy_fork = NULL;
 
-  printf("%zu STARTED\n", philosopher->id);
-
-  while (!philosopher_try_dine(philosopher, &busy_fork))
+  while (true)
   {
     philosopher_think(philosopher);
-  }
 
-  printf("%zu DONE\n", philosopher->id);
+    while (!philosopher_try_dine(philosopher, &busy_fork))
+    {
+      log_wait_forks(philosopher->id);
+    }
+  }
 }
 
 static void * philosopher_thread_routine(void * context)
 {
   philosopher_t * philosopher = context;
 
-  philosopher_dining_behavior_start(philosopher);
+  philosopher_dining_behavior_loop(philosopher);
 
   return NULL;
 }
