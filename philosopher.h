@@ -13,6 +13,6 @@ typedef struct philosopher_s
 void philosopher_assign_id(philosopher_t * philosopher, size_t id);
 
 void philosopher_dining_begin(philosopher_t * philosopher,
-                               dining_table_t * dining_table);
+                              dining_table_t * dining_table);
 
 #endif
