@@ -13,6 +13,7 @@ endif
 
 debug: CFLAGS += -g
 debug: CFLAGS += -DDEBUG
+debug: CFLAGS += -DLOG_ENABLED
 debug: program
 
 release: CFLAGS += -O3

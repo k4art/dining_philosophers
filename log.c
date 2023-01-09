@@ -40,19 +40,21 @@ static void log_char_with_ascii_seq(const char * seq, char ch)
 
 void log_dinner(size_t philosopher_id)
 {
+#if defined(LOG_ENABLED)
   log_char_with_ascii_seq(DINING_ASCII_SEQ, (int) philosopher_id + 'a');
+#endif
 }
 
 void log_think(size_t philosopher_id)
 {
-#if !defined(LOG_ONLY_DINING)
+#if defined(LOG_ENABLED) && !defined(LOG_ONLY_DINING)
   log_char_with_ascii_seq(THINKING_ASCII_SEQ, (int) philosopher_id + 'a');
 #endif
 }
 
 void log_wait_forks(size_t philosopher_id)
 {
-#if !defined(LOG_ONLY_DINING)
+#if defined(LOG_ENABLED) && !defined(LOG_ONLY_DINING)
   log_char_with_ascii_seq(WAITING_FORKS_ASCII_SEQ, (int) philosopher_id + 'a');
 #endif
 }
