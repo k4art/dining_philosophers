@@ -5,18 +5,28 @@
 
 #include "config.h"
 #include "errors.h"
+#include "log.h"
+#include "random.h"
 
 #include "dining_table.h"
 #include "philosopher.h"
 
 static void philosopher_dine(philosopher_t * philosopher)
 {
-  sleep(PHILOSOPHER_DINNER_TIME_SEC);
+  log_dinner(philosopher->id);
+
+  int sleeptime_ms = random_from_range(PHILOSOPHER_DINNER_TIME_RANGE_MIN_MS,
+                                       PHILOSOPHER_DINNER_TIME_RANGE_MAX_MS);
+  usleep(1000 * sleeptime_ms);
 }
 
 static void philosopher_think(philosopher_t * philosopher)
 {
-  printf("%zu thinking...\n", philosopher->id);
+  log_think(philosopher->id);
+
+  int sleeptime_ms = random_from_range(PHILOSOPHER_THINKING_TIME_RANGE_MIN_MS,
+                                       PHILOSOPHER_THINKING_TIME_RANGE_MAX_MS);
+  usleep(1000 * sleeptime_ms);
 }
 
 static bool philosopher_try_dine(philosopher_t * philosopher, fork_t ** p_busy_fork)
