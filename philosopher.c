@@ -57,11 +57,10 @@ static void determine_forks_order(fork_t * last_busy_fork,
 
 static bool philosopher_try_dine(philosopher_t * philosopher, fork_t ** p_busy_fork)
 {
-  assert(philosopher->dining_table != NULL);
-
   dining_table_t * table = philosopher->dining_table;
 
-  fork_t * first_fork, * second_fork;
+  fork_t * first_fork  = NULL;
+  fork_t * second_fork = NULL;
 
   get_both_forks(philosopher, &first_fork, &second_fork);
   determine_forks_order(*p_busy_fork, &first_fork, &second_fork);
@@ -112,8 +111,6 @@ static void * philosopher_thread_routine(void * context)
 
 void philosopher_assign_id(philosopher_t * philosopher, size_t id)
 {
-  assert(philosopher != NULL);
-
   philosopher->id = id;
 }
 
@@ -121,7 +118,10 @@ void philosopher_dining_begin(philosopher_t * philosopher, dining_table_t * dini
 {
   philosopher->dining_table = dining_table;
 
-  int status = pthread_create(&philosopher->thread, NULL, philosopher_thread_routine, philosopher);
+  int status = pthread_create(&philosopher->thread,
+                              NULL,
+                              philosopher_thread_routine,
+                              philosopher);
 
   CHECK_STATUS(status, "Creating thread for a philosopher");
 }
