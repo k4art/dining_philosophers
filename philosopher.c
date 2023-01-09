@@ -11,22 +11,48 @@
 #include "dining_table.h"
 #include "philosopher.h"
 
+static void sleep_random_range_ms(int min, int max)
+{
+  int sleeptime_ms = random_from_range(min, max);
+  usleep(1000 * sleeptime_ms);
+}
+
+#define SLEEP_RANDOM_RANGE(range_name) \
+  sleep_random_range_ms(range_name ## _MIN_MS, range_name ## _MAX_MS)
+
 static void philosopher_dine(philosopher_t * philosopher)
 {
   log_dinner(philosopher->id);
 
-  int sleeptime_ms = random_from_range(PHILOSOPHER_DINNER_TIME_RANGE_MIN_MS,
-                                       PHILOSOPHER_DINNER_TIME_RANGE_MAX_MS);
-  usleep(1000 * sleeptime_ms);
+  SLEEP_RANDOM_RANGE(PHILOSOPHER_DINNER_TIME_RANGE);
 }
 
 static void philosopher_think(philosopher_t * philosopher)
 {
   log_think(philosopher->id);
 
-  int sleeptime_ms = random_from_range(PHILOSOPHER_THINKING_TIME_RANGE_MIN_MS,
-                                       PHILOSOPHER_THINKING_TIME_RANGE_MAX_MS);
-  usleep(1000 * sleeptime_ms);
+  SLEEP_RANDOM_RANGE(PHILOSOPHER_THINKING_TIME_RANGE);
+}
+
+static void get_both_forks(philosopher_t * philosopher,
+                           fork_t ** p_left_fork,
+                           fork_t ** p_right_fork)
+{
+  dining_table_t * table = philosopher->dining_table;
+
+  *p_left_fork  = dining_table_left_fork_get(table, philosopher);
+  *p_right_fork = dining_table_right_fork_get(table, philosopher);
+}
+
+static void determine_forks_order(fork_t * last_busy_fork,
+                                  fork_t ** p_first_fork,
+                                  fork_t ** p_second_fork)
+{
+  if (last_busy_fork == *p_first_fork)
+  {
+    *p_first_fork  = *p_second_fork;
+    *p_second_fork = last_busy_fork;
+  }
 }
 
 static bool philosopher_try_dine(philosopher_t * philosopher, fork_t ** p_busy_fork)
@@ -35,17 +61,10 @@ static bool philosopher_try_dine(philosopher_t * philosopher, fork_t ** p_busy_f
 
   dining_table_t * table = philosopher->dining_table;
 
-  fork_t * left_fork  = dining_table_left_fork_get(table, philosopher);
-  fork_t * right_fork = dining_table_right_fork_get(table, philosopher);
+  fork_t * first_fork, * second_fork;
 
-  fork_t * first_fork  = left_fork;
-  fork_t * second_fork = right_fork;
-
-  if (*p_busy_fork == right_fork)
-  {
-    first_fork = right_fork;
-    second_fork = left_fork;
-  }
+  get_both_forks(philosopher, &first_fork, &second_fork);
+  determine_forks_order(*p_busy_fork, &first_fork, &second_fork);
 
   fork_t * busy_fork = second_fork; /* Only second_fork can be returned as busy */
 
