@@ -89,7 +89,7 @@ static void philosopher_dining_behavior_loop(philosopher_t * philosopher)
 {
   fork_t * busy_fork = NULL;
 
-  while (true)
+  for (int i = 0; i < PHILOSOPHER_DINNER_CYCLES; i++)
   {
     philosopher_think(philosopher);
 
